@@ -1,0 +1,179 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+@{
+    if (ViewBag.Result != null)
+    {
+        <div class="alert alert-success" role="alert">@ViewBag.Result</div>
+    }
+
+}
+
+<hr />
+
+<div class="row">
+
+    <div id="loginEkran" class="col-md-6">
+
+        <div class="panel panel-succes">
+            <div class="panel-heading">
+
+            </div>
+        </div>
+
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label for="name" class="control-label col-md-2">Kullanıcı Adı</label>
+                            @Html.TextBox("nickname", "", new { @class = "form-control", placeholder = "Kullanıcı Adı" })
+
+                        </div>
+                        <div class="form-group">
+                            <label for="surname" class="control-label col-md-2">Şifre</label>
+                            @Html.TextBox("password", "", new { @class = "form-control", type = "password", placeholder = "*****" })
+                        </div>
+
+
+                    </div>
+
+
+
+
+
+                </div>
+
+
+            </div>
+        </div>
+
+        <div class="panel-footer">
+            <button id="btnLogin" type="button" class="btn btn-success">Giriş</button>
+        </div>
+
+
+    </div>
+
+
+
+    <div class="col-md-6">
+
+        <ul id="employees" class="list-group">
+        </ul>
+
+
+    </div>
+</div>
+
+<script>
+
+    function LoginPersonel() {
+
+        var nickname = $("#nickname").val();
+        var password = $("#password").val();
+
+
+        var giris = {
+
+            "nickname": nickname,
+            "password": password
+        }
+
+        $.ajax({
+            method: "POST",
+            url: "../api/personel",
+            type: "json",
+            data: giris
+        }).done(function (response, statusText, jqXHR) {
+
+
+            console.log(response),
+                console.log(statusText),
+                console.log(jqXHR)
+            if (jqXHR.status == 200) {
+                alert("Giriş Başarılı")
+
+                $("#loginEkran").hide();
+                $(document).ready(function () {
+                    $('#password').val('');
+
+                });
+
+                var ul = $("#employees")
+                ul.empty();
+
+
+                var a = $("<li class='list-group-item'>" + "Ad: " + response["PERSONEL_AD"] + "</li>");
+                var b = $("<li class='list-group-item'>" + "Soyad: " + response["PERSONEL_SOYAD"] + "</li>");
+                var c = $("<li class='list-group-item'>" + "T.C. Kimlik Numarası: " + response["TCKN"] + "</li>");
+                var d = $("<li class='list-group-item'>" + "Sicil No: " + response["SICIL_NO"] + "</li>");
+                var e = $("<button id='btnExit' type='button' class='btn btn-danger'>Çıkış</button>")
+                ul.append(a, b, c, d, e);
+
+
+                $("#btnExit").click(function () {
+
+                    var ul = $("#employees")
+                    ul.empty();
+                    $("#loginEkran").show();
+
+
+
+
+
+
+                })
+            }
+
+
+
+
+        }).fail(function (response) {
+            alert("Kullanıcı adı veya şifre hatalı ");
+            $(document).ready(function () {
+                $('#nickname').val('');
+                $('#password').val('');
+            });
+
+
+
+
+        });
+
+
+
+
+
+
+    }
+
+
+
+    $(function () {
+
+
+
+        $("#btnLogin").click(function () {
+
+            var ul = $("#employees")
+            ul.empty();
+            LoginPersonel();
+
+
+        })
+
+
+
+    })
+
+
+
+
+
+
+
+
+</script>
